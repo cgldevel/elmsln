@@ -1,0 +1,116 @@
+
+<link rel="import" href="../lrn-gitbook-gitbook-icon/lrn-gitbook-gitbook-icon.html">
+
+<dom-module id="lrn-gitbook-sync">
+  <template>
+    <style>
+      :host {
+        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3em;
+      }
+
+      :host > * {
+        margin: 0 1em;
+      }
+
+      #sync-button {
+        color: inherit;
+        font-size: 2.5em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 4em;
+      }
+      #sync-button > *:not(:first-child) {
+        margin-top: 1em; 
+      }
+      .sync-icon {
+        width: 1em;
+        height: 1em;
+        transform: scale(-1,-1);
+      }
+      :host[is-syncing] .sync-icon {
+        animation: rotate 1s infinite linear;
+      }
+      .sync-status {
+        text-transform: uppercase;
+        padding: .3em .5em;
+        background: rgba(green, 0.8);
+      }
+
+      lrn-gitbook-gitbook-icon {
+        max-width: 10em;
+      }
+
+      lrn-icon.icons {
+        width: 4.5em;
+        height: 4.5em;
+        opacity: .8;
+      }
+
+      @keyframes rotating {
+        from {
+          transform: rotate(-359deg);
+        }
+        to {
+          transform: rotate(1deg);
+        }
+      }
+    </style>
+
+    <lrn-icon class="icons" icon="content-outline"></lrn-icon>
+    
+    <a raised id="sync-button" tabindex="1">
+      <iron-icon class="sync-icon" icon="icons:cached"></iron-icon>
+      <div class="sync-status">
+        [[status]]
+      </div>
+    </a>
+
+    <lrn-gitbook-gitbook-icon></lrn-gitbook-gitbook-icon>
+    
+  </template>
+  <script>
+    Polymer({
+      is: 'lrn-gitbook-sync',
+      properties: {
+        isSyncing: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        status: {
+          type: String,
+          value: 'up-to-date',
+          notify: true
+        }
+      },
+      observers: [
+        '_isSyncingChange(isSyncing)',
+        '_statusChange(status)'
+      ],
+      ready: function() {
+        var root = this;
+        root.$$('#sync-button').addEventListener('click', function(e) {
+          root.isSyncing = !root.isSyncing;
+        });
+      },
+      _isSyncingChange: function(isSyncing) {
+        var root = this;
+        if (isSyncing) {
+          root.status = 'syncing';
+        }
+        else {
+          root.status = 'up-to-date';
+        }
+      },
+      _statusChange: function(status) {
+        var root = this;
+        root.fire('gitbook-status-change', {status: status});
+      }
+    });
+  </script>
+</dom-module>

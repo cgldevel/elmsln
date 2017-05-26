@@ -4,7 +4,7 @@
   "main": "lrnapp-gitbook.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.9.1",
-    "build": "LRNWebComponents/build#^0.0.1",
+    "build": "LRNWebComponents/build#^0.0.5",
     "hax-behaviors": "LRNWebComponents/hax-behaviors#^0.0.13"
   },
   "devDependencies": {
