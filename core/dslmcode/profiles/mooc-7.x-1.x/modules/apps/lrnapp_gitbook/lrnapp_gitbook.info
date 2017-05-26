@@ -1,0 +1,7 @@
+name = LRN APP Gitbook
+description = LRN Polymer app for gitbook
+core = 7.x
+package = MOOC
+dependencies[] = git_book
+dependencies[] = git_book_gb
+dependencies[] = webcomponents_app

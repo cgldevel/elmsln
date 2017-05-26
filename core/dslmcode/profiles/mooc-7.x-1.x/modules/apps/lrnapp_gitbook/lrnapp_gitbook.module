@@ -1,0 +1,5 @@
+<?php
+
+function _mooc_page_gitbook($data) {
+  return TRUE;
+}
