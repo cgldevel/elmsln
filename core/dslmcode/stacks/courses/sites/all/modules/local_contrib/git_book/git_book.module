@@ -355,11 +355,13 @@ function _git_book_pull($repo, $remote, $branch) {
  */
 function _git_book_get_status($repo) {
   $status = 'up-to-date';
-  $raw_status = $repo->run('fetch --all');
-  $raw_status = $repo->run('status -sb');
-  preg_match('/\[(.*)\]/', $raw_status, $matches);
-  if (isset($matches[1])) {
-    $status = $matches[1];
+  @$repo->run('fetch --all');
+  $raw_status = @$repo->run('status -sb');
+  if ($raw_status) {
+    preg_match('/\[(.*)\]/', $raw_status, $matches);
+    if (isset($matches[1])) {
+      $status = $matches[1];
+    }
   }
   return $status;
 }
