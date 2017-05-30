@@ -13,13 +13,44 @@
         min-width: 1rem;
       }
     </style>
-    <lrn-gitbook-sync status="{{status}}"></lrn-gitbook-sync>
+    <!--<template is="dom-if" if="[[_nodeIdIsset(nodeId)]]">-->
+      <iron-ajax
+        auto
+        id="ajax"
+        params="{{requestParams}}"
+        url="[[source-path]]"
+        handle-as="json"
+        on-response="handleResponse"></iron-ajax>
+      <lrn-gitbook-sync status="{{status}}"></lrn-gitbook-sync>
+    <!--</template>-->
   </template>
 
   <script>
     Polymer({
       is: 'lrnapp-gitbook',
       properties: {
+        nodeId: {
+          type: String
+        },
+        requestParams: {
+          type: Object,
+          value: {}
+        }
+      },
+      observers: [
+        '_nodeIdChange(nodeId)'
+      ],
+      _nodeIdChange: function(nodeId) {
+        this.requestParams = {nodeId: nodeId};
+      },
+      _nodeIdIsset: function(nodeId) {
+        if (nodeId) {
+          return true;
+        }
+      },
+      handleResponse: function(res) {
+        let root = this;
+        var response = res.detail.response.data;
       },
       /**
        * Simple way to convert from object to array.
