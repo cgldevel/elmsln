@@ -6,14 +6,21 @@
     <style>
       :host {
         display: block;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         padding: 3em;
       }
 
-      :host > * {
+      .wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .wrapper > * {
         margin: 0 1em;
+      }
+
+      .sync__title {
+        text-align: center;
       }
 
       #sync-button {
@@ -30,7 +37,6 @@
       .sync-icon {
         width: 1em;
         height: 1em;
-        transform: scale(-1,-1);
       }
       :host[is-syncing] .sync-icon {
         animation: rotate 1s infinite linear;
@@ -61,16 +67,18 @@
       }
     </style>
 
-    <lrn-icon class="icons" icon="content-outline"></lrn-icon>
-    
-    <a raised id="sync-button" tabindex="1">
-      <iron-icon class="sync-icon" icon="icons:cached"></iron-icon>
-      <div class="sync-status">
-        [[status]]
-      </div>
-    </a>
+    <h2 class="sync__title">[[title]]</h2>
 
-    <lrn-gitbook-gitbook-icon></lrn-gitbook-gitbook-icon>
+    <div class="wrapper">
+      <lrn-icon class="icons" icon="content-outline"></lrn-icon>
+      <a raised id="sync-button" tabindex="1">
+        <iron-icon class="sync-icon" icon="[[icon]]"></iron-icon>
+        <div class="sync-status">
+          [[status]]
+        </div>
+      </a>
+      <lrn-gitbook-gitbook-icon></lrn-gitbook-gitbook-icon>
+    </div>
     
   </template>
   <script>
@@ -86,30 +94,31 @@
           type: String,
           value: 'up-to-date',
           notify: true
-        }
+        },
+        title: String,
+        icon: String
       },
       observers: [
-        '_isSyncingChange(isSyncing)',
         '_statusChange(status)'
       ],
       ready: function() {
         var root = this;
         root.$$('#sync-button').addEventListener('click', function(e) {
-          root.isSyncing = !root.isSyncing;
+          if (root.status !== 'up-to-date') {
+            root.fire('gitbook-sync-clicked');
+          }
         });
-      },
-      _isSyncingChange: function(isSyncing) {
-        var root = this;
-        if (isSyncing) {
-          root.status = 'syncing';
-        }
-        else {
-          root.status = 'up-to-date';
-        }
       },
       _statusChange: function(status) {
         var root = this;
         root.fire('gitbook-status-change', {status: status});
+        // set the icon based on the status
+        if (status === 'up-to-date') {
+          this.icon = 'icons:check';
+        }
+        else {
+          this.icon = 'icons:cached';
+        }
       }
     });
   </script>

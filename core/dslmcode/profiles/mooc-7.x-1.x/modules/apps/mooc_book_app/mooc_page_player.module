@@ -51,7 +51,6 @@ function _mooc_page_player_data($machine_name, $app_route) {
     }
     $status = 200;
   }
-  //
   return array(
     'status' => $status,
     'data' => $return

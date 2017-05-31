@@ -13,7 +13,12 @@
         min-width: 1rem;
       }
     </style>
-    <!--<template is="dom-if" if="[[_nodeIdIsset(nodeId)]]">-->
+      <template is="dom-if" if="[[repos]]">
+        <template is="dom-repeat" items="[[repos]]">
+          <lrn-gitbook-sync title="[[item.title]]" status="[[item.status]]"></lrn-gitbook-sync>
+        </template>
+      </template>
+
       <iron-ajax
         auto
         id="ajax"
@@ -21,7 +26,6 @@
         url="[[source-path]]"
         handle-as="json"
         on-response="handleResponse"></iron-ajax>
-      <lrn-gitbook-sync status="{{status}}"></lrn-gitbook-sync>
     <!--</template>-->
   </template>
 
@@ -35,11 +39,20 @@
         requestParams: {
           type: Object,
           value: {}
+        },
+        repos: {
+          type: Object,
         }
       },
       observers: [
         '_nodeIdChange(nodeId)'
       ],
+      listeners: {
+        'gitbook-sync-clicked': '_gitbookSycnedClicked'
+      },
+      _gitbookSycnedClicked: function(e) {
+        console.log('synced clicked', e);
+      },
       _nodeIdChange: function(nodeId) {
         this.requestParams = {nodeId: nodeId};
       },
@@ -51,6 +64,8 @@
       handleResponse: function(res) {
         let root = this;
         var response = res.detail.response.data;
+        this.repos = response;
+        console.log(response);
       },
       /**
        * Simple way to convert from object to array.

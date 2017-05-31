@@ -1,5 +1,32 @@
 <?php
 
-function _mooc_page_gitbook($data) {
-  _git_book_get_status();
+function _mooc_page_gitbook($machine_name, $app_route) {
+  $return = array();
+  // load all gitbook nodes
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'git_book')
+    ->propertyCondition('status', NODE_PUBLISHED);
+  $result = $query->execute();
+  if (isset($result['node'])) {
+    $nids = array_keys($result['node']);
+    $nodes = entity_load('node', $nids);
+    // for each gitbook load the repo and get the status
+    foreach ($nodes as $node) {
+      $repo = _git_book_get_repo($node);
+      if ($repo) {
+        $repo_status = _git_book_get_status($repo);
+        // add the status to the returned data
+        $return[] = array(
+          'title' => $node->title,
+          'nid' => $node->nid,
+          'status' => $repo_status,
+        );
+      }
+    }
+  } 
+  return array(
+    'status' => '200',
+    'data' => $return
+  );
 }
